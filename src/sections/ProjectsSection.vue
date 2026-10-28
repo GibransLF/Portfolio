@@ -39,8 +39,8 @@ const validProjects = computed(() => {
           class="group flex flex-col justify-between rounded-xl border border-border bg-card p-5 shadow-sm transition-all hover:shadow-md hover:border-border/80"
         >
           <div class="space-y-4">
-            <!-- Thumbnail Image (consistent aspect ratio with fallback) -->
-            <div v-if="project.image !== undefined" class="w-full overflow-hidden rounded-lg">
+            <!-- Thumbnail Image (consistent aspect ratio with fallback, hidden if empty as per PRD 3.3 & 6.5) -->
+            <div v-if="project.image && project.image.trim().length > 0" class="w-full overflow-hidden rounded-lg">
               <ImageWithFallback
                 :src="project.image"
                 :alt="project.title"

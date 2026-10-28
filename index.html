@@ -4,26 +4,47 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
     <title>Full Stack Developer | Portfolio</title>
     <meta name="description" content="Personal portfolio of a Full Stack Developer focusing on Backend Development with an interest in Data Analytics." />
     
+    <!-- Preconnect for external Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
     <!-- Open Graph / Social Sharing -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Full Stack Developer | Portfolio" />
     <meta property="og:description" content="Personal portfolio of a Full Stack Developer focusing on Backend Development with an interest in Data Analytics." />
+
+    <!-- Critical instant dark-canvas styling to eliminate white flash on refresh -->
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      html.dark,
+      html.dark body {
+        background-color: #121212 !important;
+        color: #ededed !important;
+      }
+      html:not(.dark),
+      html:not(.dark) body {
+        background-color: #ffffff !important;
+        color: #171717 !important;
+      }
+    </style>
 
     <!-- Anti-flash inline script for dark/light theme -->
     <script>
       (function () {
         try {
           const theme = localStorage.getItem('portfolio-theme') || 'dark'
-          if (theme === 'dark') {
-            document.documentElement.classList.add('dark')
-          } else {
-            document.documentElement.classList.remove('dark')
-          }
+          const isDark = theme === 'dark'
+          document.documentElement.classList.toggle('dark', isDark)
+          document.documentElement.style.colorScheme = isDark ? 'dark' : 'light'
         } catch (e) {
           document.documentElement.classList.add('dark')
+          document.documentElement.style.colorScheme = 'dark'
         }
       })()
     </script>

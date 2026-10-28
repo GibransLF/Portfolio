@@ -117,39 +117,39 @@ Dokumen checklist ini diturunkan langsung dari spesifikasi [`agents/PRD.md`](./a
 
 ## 6. Build & CI/CD Deployment
 
-- [ ] **Otomasi GitHub Actions (`.github/workflows/deploy.yml`)**
-  - [ ] Trigger on push ke branch `main`.
-  - [ ] Setup Node.js dan install dependensi dengan `npm ci`.
-  - [ ] Eksekusi build static (`npm run build`).
-  - [ ] Upload artifact dari direktori `dist/`.
-  - [ ] Deploy ke GitHub Pages menggunakan action resmi GitHub (`actions/deploy-pages`).
-- [ ] **Verifikasi Build Lokal**
-  - [ ] Jalankan `npm run build` dan pastikan tidak ada error.
-  - [ ] Uji hasil build melalui `npm run preview` dengan subpath `/portfolio/`.
+- [x] **Otomasi GitHub Actions (`.github/workflows/deploy.yml`)**
+  - [x] Trigger on push ke branch `main`.
+  - [x] Setup Node.js dan install dependensi dengan `npm ci`.
+  - [x] Eksekusi build static (`npm run build`).
+  - [x] Upload artifact dari direktori `dist/`.
+  - [x] Deploy ke GitHub Pages menggunakan action resmi GitHub (`actions/deploy-pages`).
+- [x] **Verifikasi Build Lokal**
+  - [x] Jalankan `npm run build` dan pastikan tidak ada error.
+  - [x] Uji hasil build melalui `npm run preview` dengan subpath `/portfolio/`.
 
 ---
 
 ## 7. Dokumentasi Proyek (`docs.md`)
 
-- [ ] Buat file `docs.md` yang memuat:
-  - [ ] Deskripsi tujuan proyek dan stack teknologi.
-  - [ ] Panduan instalasi dan menjalankan server dev lokal.
-  - [ ] Perintah build dan preview produksi.
-  - [ ] Penjelasan struktur direktori dan komponen utama.
-  - [ ] Struktur data JSON dan panduan update konten (profil, proyek, skill, pengalaman).
-  - [ ] Panduan penambahan dan penggantian aset gambar.
-  - [ ] Mekanisme kerja tema Dark/Light.
-  - [ ] Konfigurasi Vite `base` path untuk GitHub Pages.
-  - [ ] Alur kerja GitHub Actions & pengaturan repository GitHub Pages.
+- [x] Buat file `docs.md` yang memuat:
+  - [x] Deskripsi tujuan proyek dan stack teknologi.
+  - [x] Panduan instalasi dan menjalankan server dev lokal.
+  - [x] Perintah build dan preview produksi.
+  - [x] Penjelasan struktur direktori dan komponen utama.
+  - [x] Struktur data JSON dan panduan update konten (profil, proyek, skill, pengalaman).
+  - [x] Panduan penambahan dan penggantian aset gambar.
+  - [x] Mekanisme kerja tema Dark/Light.
+  - [x] Konfigurasi Vite `base` path untuk GitHub Pages.
+  - [x] Alur kerja GitHub Actions & pengaturan repository GitHub Pages.
 
 ---
 
 ## 8. Verifikasi Kriteria Penerimaan Akhir (Acceptance Sign-off)
 
-- [ ] Semua 6 seksi tampil berurutan dalam satu halaman.
-- [ ] Tidak ada halaman detail proyek terpisah atau unduhan CV.
-- [ ] Tidak ada data fiktif atau tautan rusak.
-- [ ] Dark mode default bekerja tanpa flash, dan toggle tema berfungsi baik.
-- [ ] Image fallback berfungsi konsisten saat gambar gagal/kosong.
-- [ ] Build produksi menghasilkan aset statis tanpa error di path `/portfolio/`.
-- [ ] Dokumentasi `docs.md` lengkap dan mudah dipahami.
+- [x] Semua 6 seksi tampil berurutan dalam satu halaman.
+- [x] Tidak ada halaman detail proyek terpisah atau unduhan CV.
+- [x] Tidak ada data fiktif atau tautan rusak.
+- [x] Dark mode default bekerja tanpa flash, dan toggle tema berfungsi baik.
+- [x] Image fallback berfungsi konsisten saat gambar gagal/kosong.
+- [x] Build produksi menghasilkan aset statis tanpa error di path `/portfolio/`.
+- [x] Dokumentasi `docs.md` lengkap dan mudah dipahami.
