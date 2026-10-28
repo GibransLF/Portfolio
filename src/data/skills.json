@@ -1,0 +1,51 @@
+[
+  {
+    "category": "Frontend Development",
+    "items": [
+      "Vue 3",
+      "JavaScript (ES6+)",
+      "HTML5",
+      "CSS3",
+      "Tailwind CSS",
+      "Vite"
+    ]
+  },
+  {
+    "category": "Backend Development",
+    "items": [
+      "Node.js",
+      "Express.js",
+      "RESTful APIs",
+      "Go",
+      "Python"
+    ]
+  },
+  {
+    "category": "Database & Storage",
+    "items": [
+      "PostgreSQL",
+      "MySQL",
+      "MongoDB",
+      "Redis"
+    ]
+  },
+  {
+    "category": "DevOps & Tools",
+    "items": [
+      "Git",
+      "GitHub Actions",
+      "Docker",
+      "Linux",
+      "Postman"
+    ]
+  },
+  {
+    "category": "Data Analytics",
+    "items": [
+      "Python",
+      "Pandas",
+      "SQL Data Analysis",
+      "Data Visualization"
+    ]
+  }
+]

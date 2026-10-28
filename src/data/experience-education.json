@@ -1,0 +1,56 @@
+[
+  {
+    "type": "work",
+    "title": "Full Stack Developer",
+    "institution": "Tech Solution Studio",
+    "period": "2023 - Present",
+    "summary": "Building and maintaining full stack web applications with a focus on scalable backend services and responsive client interfaces.",
+    "responsibilities": [
+      "Designed and deployed RESTful microservices and optimized PostgreSQL database queries.",
+      "Engineered frontend interfaces using Vue 3 and Tailwind CSS with a mobile-first approach.",
+      "Established CI/CD pipeline automation with GitHub Actions for reliable deployment workflows."
+    ],
+    "achievements": [
+      "Reduced average API response latency by 35% through caching strategies with Redis.",
+      "Refactored legacy modules into clean, testable service layers."
+    ],
+    "technologies": [
+      "Vue 3",
+      "Node.js",
+      "PostgreSQL",
+      "Redis",
+      "Docker",
+      "Tailwind CSS"
+    ]
+  },
+  {
+    "type": "internship",
+    "title": "Backend Engineering Intern",
+    "institution": "Data & Software Labs",
+    "period": "2022 - 2023",
+    "summary": "Assisted senior backend engineers in developing internal APIs and data extraction pipelines.",
+    "responsibilities": [
+      "Implemented CRUD endpoints and integrated validation middlewares.",
+      "Assisted in constructing automated database migration scripts and API test coverage."
+    ],
+    "achievements": [
+      "Delivered an automated data parsing script that streamlined weekly internal reporting."
+    ],
+    "technologies": [
+      "Node.js",
+      "Express.js",
+      "MySQL",
+      "Git"
+    ]
+  },
+  {
+    "type": "education",
+    "title": "Bachelor of Computer Science",
+    "institution": "University Faculty of Computer Science",
+    "period": "2019 - 2023",
+    "summary": "Graduated with honors. Completed coursework in Algorithms & Data Structures, Database Systems, Software Engineering, and Data Mining.",
+    "achievements": [
+      "Final Project: Design and Implementation of an Analytical Data Aggregation System."
+    ]
+  }
+]

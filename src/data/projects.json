@@ -1,0 +1,41 @@
+[
+  {
+    "title": "Personal Developer Portfolio",
+    "description": "A clean, minimalist personal portfolio website built with Vue 3, Vite, and Tailwind CSS, featuring dark mode and automated GitHub Pages deployment.",
+    "image": "",
+    "technologies": [
+      "Vue 3",
+      "Vite",
+      "Tailwind CSS",
+      "JavaScript",
+      "GitHub Actions"
+    ],
+    "githubUrl": "https://github.com/portfolio"
+  },
+  {
+    "title": "RESTful API & Microservices Starter",
+    "description": "High-performance modular backend service boilerplate with structured database pooling, middleware authentication, and automated integration tests.",
+    "image": "",
+    "technologies": [
+      "Node.js",
+      "Express.js",
+      "PostgreSQL",
+      "Docker",
+      "Redis"
+    ],
+    "githubUrl": "https://github.com"
+  },
+  {
+    "title": "Data Analytics & Reporting Dashboard",
+    "description": "Analytical service exploring metrics visualization, automated data transformation pipelines, and scheduled reporting summaries.",
+    "image": "",
+    "technologies": [
+      "Python",
+      "Pandas",
+      "SQL",
+      "Vue.js",
+      "Tailwind CSS"
+    ],
+    "githubUrl": "https://github.com"
+  }
+]

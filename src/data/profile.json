@@ -1,0 +1,19 @@
+{
+  "name": "Developer Name",
+  "role": "Full Stack Developer",
+  "secondaryFocus": "Backend Development",
+  "interests": [
+    "Backend Architecture",
+    "Data Analytics",
+    "Distributed Systems",
+    "Clean Code & Performance"
+  ],
+  "photo": "",
+  "summary": "Full Stack Developer specializing in building robust backend systems, reliable APIs, and responsive web applications with an analytical approach to data.",
+  "about": "I am a Full Stack Developer with a core focus on backend architecture and an active interest in data analytics. I enjoy crafting dependable, scalable web services and combining them with intuitive user interfaces. I value clean structure, maintainable codebases, and continuous learning.",
+  "contacts": {
+    "email": "developer@example.com",
+    "github": "https://github.com",
+    "linkedin": "https://linkedin.com"
+  }
+}
