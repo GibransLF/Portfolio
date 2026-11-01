@@ -1,41 +1,60 @@
 [
   {
-    "title": "Personal Developer Portfolio",
-    "description": "A clean, minimalist personal portfolio website built with Vue 3, Vite, and Tailwind CSS, featuring dark mode and automated GitHub Pages deployment.",
-    "image": "",
+    "title": "PMB Chatbot - RAG-Based Admission Assistant (Skripsi Project)",
+    "description": "A web-based admission assistant designed to help prospective students access information about the university's admission process. It uses Retrieval-Augmented Generation (RAG) to provide relevant answers based on a managed knowledge base. The system combines a Laravel application with a Python-based AI service.",
+    "images": [
+      "src/assets/projects/PMBChatbot/1.png",
+      "src/assets/projects/PMBChatbot/2.png",
+      "src/assets/projects/PMBChatbot/3.png",
+      "src/assets/projects/PMBChatbot/4.png"
+    ],
     "technologies": [
-      "Vue 3",
-      "Vite",
+      "Laravel 13",
+      "Livewire 4",
       "Tailwind CSS",
-      "JavaScript",
-      "GitHub Actions"
-    ],
-    "githubUrl": "https://github.com/portfolio"
-  },
-  {
-    "title": "RESTful API & Microservices Starter",
-    "description": "High-performance modular backend service boilerplate with structured database pooling, middleware authentication, and automated integration tests.",
-    "image": "",
-    "technologies": [
-      "Node.js",
-      "Express.js",
-      "PostgreSQL",
-      "Docker",
-      "Redis"
-    ],
-    "githubUrl": "https://github.com"
-  },
-  {
-    "title": "Data Analytics & Reporting Dashboard",
-    "description": "Analytical service exploring metrics visualization, automated data transformation pipelines, and scheduled reporting summaries.",
-    "image": "",
-    "technologies": [
       "Python",
-      "Pandas",
-      "SQL",
-      "Vue.js",
-      "Tailwind CSS"
+      "FastAPI",
+      "LangChain",
+      "PostgreSQL",
+      "pgvector",
+      "OpenRouter"
     ],
-    "githubUrl": "https://github.com"
+    "githubUrl": "https://github.com/GibransLF/web"
+  },
+  {
+    "title": "25Labstudio - Studio Rental Management System (Kerja Praktik Project)",
+    "description": "A web-based management system for a music studio rental and music course business. It provides booking management, scheduling, and payment processing through Midtrans, helping streamline daily studio operations. and log in/register using a Google account to enhance the user experience.",
+    "images": [
+      "src/assets/projects/25Labstudio/1.png",
+      "src/assets/projects/25Labstudio/2.png",
+      "src/assets/projects/25Labstudio/3.png",
+      "src/assets/projects/25Labstudio/4.png",
+      "src/assets/projects/25Labstudio/5.png",
+      "src/assets/projects/25Labstudio/6.png"
+    ],
+    "technologies": [
+      "Laravel",
+      "Livewire",
+      "PHP",
+      "MySQL",
+      "Tailwind CSS",
+      "Midtrans"
+    ],
+    "githubUrl": "https://github.com/GibransLF/25labstudio"
+  },
+  {
+    "title": "IoT-Based School Miniature and Attendance System",
+    "description": "A group project involving the development of a miniature smart school environment using ESP32. My contributions included IoT coding, hardware assembly, and the web-based RFID attendance interface. The system also features entry and exit alerts using a buzzer, lighting control, and gas detection using an MQ-series sensor. The ESP32 source code is private and is not included in the repository.",
+    "images": ["src/assets/projects/P6Project/1.webp"],
+    "technologies": [
+      "ESP32",
+      "Arduino IDE",
+      "RFID",
+      "Firebase",
+      "JavaScript",
+      "HTML",
+      "CSS"
+    ],
+    "githubUrl": "https://github.com/GibransLF/P6-IoT-Absensi"
   }
 ]

@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import rawEntries from '@/data/experience-education.json'
+import rawEntries from '@/data/experience.json'
 
 const validEntries = computed(() => {
   if (!Array.isArray(rawEntries)) return []
@@ -12,11 +12,14 @@ const validEntries = computed(() => {
 const getBadgeLabel = (type) => {
   switch (type?.toLowerCase()) {
     case 'work':
+    case 'full-time':
       return 'Professional Experience'
     case 'internship':
       return 'Internship'
-    case 'education':
-      return 'Education'
+    case 'freelance':
+      return 'Freelance'
+    case 'contract':
+      return 'Contract'
     default:
       return type || 'Experience'
   }
@@ -32,11 +35,11 @@ const getBadgeLabel = (type) => {
     <div class="space-y-8">
       <div class="space-y-2">
         <h2 id="experience-heading" class="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-          Experience &amp; Education
+          Experience
         </h2>
         <div class="h-1 w-12 rounded bg-foreground/20"></div>
         <p class="text-sm sm:text-base text-muted-foreground">
-          Academic background, professional roles, and engineering milestones.
+          Professional roles, internships, software engineering milestones, and work history.
         </p>
       </div>
 
@@ -56,7 +59,10 @@ const getBadgeLabel = (type) => {
           <div class="space-y-2.5">
             <!-- Type badge & Period -->
             <div class="flex flex-wrap items-center gap-2">
-              <span class="inline-flex items-center rounded bg-secondary px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-secondary-foreground border border-border/60">
+              <span
+                v-if="item.type"
+                class="inline-flex items-center rounded bg-secondary px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-secondary-foreground border border-border/60"
+              >
                 {{ getBadgeLabel(item.type) }}
               </span>
               <span v-if="item.period" class="text-xs sm:text-sm font-medium text-muted-foreground">
@@ -64,14 +70,14 @@ const getBadgeLabel = (type) => {
               </span>
             </div>
 
-            <!-- Position/Degree Title -->
+            <!-- Position Title -->
             <h3 class="text-lg sm:text-xl font-bold tracking-tight text-foreground">
               {{ item.title }}
             </h3>
 
-            <!-- Institution or Company -->
-            <p v-if="item.institution" class="text-sm sm:text-base font-semibold text-foreground/80">
-              {{ item.institution }}
+            <!-- Company or Studio -->
+            <p v-if="item.company || item.institution" class="text-sm sm:text-base font-semibold text-foreground/80">
+              {{ item.company || item.institution }}
             </p>
 
             <!-- Short Summary -->

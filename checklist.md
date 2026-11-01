@@ -1,155 +1,71 @@
-# Implementation Checklist: Personal Developer Portfolio
+# Implementation Checklist: Multi-Image Projects (Maksimal 4 Gambar, Hover Slideshow & Modal Preview Detail)
 
-Dokumen checklist ini diturunkan langsung dari spesifikasi [`agents/PRD.md`](./agents/PRD.md) untuk memandu proses implementasi dan verifikasi bertahap.
-
----
-
-## 1. Setup & Environment
-
-- [x] **Migrasi ke JavaScript Murni (No TypeScript)**
-  - [x] Ubah `src/main.ts` menjadi `src/main.js`.
-  - [x] Ubah `src/lib/utils.ts` menjadi `src/lib/utils.js`.
-  - [x] Ubah `vite.config.ts` menjadi `vite.config.js`.
-  - [x] Perbarui `index.html` agar mengimpor `/src/main.js`.
-  - [x] Hapus pemanggilan `vue-tsc` pada script `package.json` (`"build": "vite build"`).
-  - [x] Bersihkan file/konfigurasi TypeScript yang tidak lagi digunakan.
-- [x] **Konfigurasi Vite & Routing Path**
-  - [x] Tambahkan konfigurasi `base: '/portfolio/'` pada `vite.config.js`.
-  - [x] Pastikan path alias `@` menunjuk ke folder `./src`.
-- [x] **SEO & Metadata Awal di `index.html`**
-  - [x] Set atribut bahasa `<html lang="en">`.
-  - [x] Tambahkan `<title>` yang representatif untuk profil developer.
-  - [x] Tambahkan meta description, viewport, dan Open Graph (OG) tags dasar.
+Dokumen ini berisi daftar langkah implementasi untuk meningkatkan komponen Projects: mendukung hingga 4 gambar per proyek menggunakan format array, interaksi hover pada kartu (langsung beralih ke gambar 2 lalu slideshow otomatis), serta modal preview galeri detail lengkap (berdasarkan referensi seksi sertifikat untuk mengatasi teks deskripsi yang terpotong).
 
 ---
 
-## 2. Struktur Data JSON (`src/data/`)
+## 1. Pembaruan Struktur Data JSON (`src/data/projects.json`)
 
-- [x] **`src/data/profile.json`**
-  - [x] Menyediakan field: `name`, `role` ("Full Stack Developer"), `secondaryFocus` ("Backend Development"), `interests`, `photo`, `summary`, `about`, dan kontak (`email`, `github`, `linkedin`).
-  - [x] Tidak menyertakan klaim atau tautan fiktif.
-- [x] **`src/data/projects.json`**
-  - [x] Setiap entri memuat: `title`, `description`, `image` (opsional), `technologies` (array), dan `githubUrl`.
-  - [x] Validasi format data agar urutan sesuai file JSON.
-- [x] **`src/data/skills.json`**
-  - [x] Pengelompokan berdasarkan kategori (Frontend, Backend, Database, Tools, Data Analytics).
-  - [x] Berisi nama-nama teknologi saja (tanpa icon atau persentase).
-- [x] **`src/data/experience-education.json`**
-  - [x] Entri mencakup: tipe (`education`, `work`, `internship`), `title`/posisi/derajat, `institution`/perusahaan, `period`, `summary`, serta opsi `responsibilities`, `achievements`, `technologies`.
-  - [x] Hanya mengisi data riil tanpa fabrikasi informasi.
+- [x] **Format Array `images`**:
+  - [x] Ubah properti gambar pada setiap entri proyek menjadi format array `images: [...]`.
+  - [x] Tetapkan elemen indeks ke-0 (`images[0]`) sebagai gambar utama (*main image*).
+  - [x] Mendukung jumlah gambar secara dinamis (fleksibel sesuai isi array).
+  - [x] Sediakan backwards-compatibility di komponen jika ada entri dengan format string tunggal (`image`) atau key `image1..image4`.
+- [x] **Penyesuaian Path Aset Gambar**:
+  - [x] Pastikan path gambar (`1.png`, `2.png`, dst.) tertulis secara konsisten dan teruji.
 
 ---
 
-## 3. Fondasi UI, Tema & Komponen Inti
+## 2. Penyempurnaan Card Thumbnail & Hover Slideshow (`src/sections/ProjectsSection.vue`)
 
-- [x] **Sistem Tema Dark/Light**
-  - [x] Buat composable `useTheme.js` (atau helper state).
-  - [x] Dark mode aktif sebagai default.
-  - [x] Sinkronisasi dengan class `dark` pada elemen `<html>`.
-  - [x] Simpan preferensi pengguna di `localStorage`.
-  - [x] Tambahkan script pencegah flash tema di `index.html`.
-  - [x] Buat komponen tombol toggle tema (`ThemeToggle.vue`) dengan ikon `Sun` dan `Moon`.
-- [x] **Komponen Fallback Gambar (`ImageWithFallback.vue`)**
-  - [x] Tangani kondisi path gambar kosong/tidak ada.
-  - [x] Tangani event `error` saat gambar gagal dimuat.
-  - [x] Tampilkan placeholder bergaya neutral dengan ikon `ImageOff` dari `@lucide/vue`.
-  - [x] Tampilkan label teks *"Image unavailable"*.
-  - [x] Pertahankan aspek rasio frame gambar (1:1 untuk profil, rasio tetap untuk thumbnail proyek).
-  - [x] Placeholder adaptif terhadap dark/light mode.
-- [x] **Komponen Ikon Brand SVG**
-  - [x] `GithubIcon.vue` (inline SVG bersih dan scalable).
-  - [x] `LinkedinIcon.vue` (inline SVG bersih dan scalable).
-- [x] **Navigasi & Header (`Navbar.vue`)**
-  - [x] Menu navigasi mencakup 6 seksi: Hero, About, Projects, Skills, Experience, Contact.
-  - [x] Mendukung smooth scrolling saat menu diklik.
-  - [x] Responsif untuk perangkat mobile dengan menu drawer/dropdown.
-  - [x] Menyediakan focus ring yang jelas untuk navigasi keyboard.
+- [x] **Helper Resolusi Aset Dinamis**:
+  - [x] Buat resolver URL aset Vite (`import.meta.glob`) agar path gambar lokal dari JSON dapat dimuat sempurna baik di dev server maupun saat build produksi (`npm run build`).
+- [x] **State Gambar Aktif per Kartu**:
+  - [x] Buat state reaktif untuk melacak indeks gambar aktif pada masing-masing kartu proyek secara independen.
+- [x] **Interaksi Kursor Aktif (`mouseenter`)**:
+  - [x] Jika gambar $\le 1$: Tampilan tetap stabil pada gambar utama.
+  - [x] Jika gambar $\ge 2$:
+    - [x] Seketika beralih ke gambar kedua (`images[1]`).
+    - [x] Mulai interval timer (~1.8 detik) untuk melanjutkan slideshow secara berurutan (`images[1] -> images[2] -> images[3] -> images[0] -> ...`).
+- [x] **Interaksi Kursor Keluar (`mouseleave`)**:
+  - [x] Bersihkan interval timer (`clearInterval`).
+  - [x] Reset indeks kartu kembali ke gambar utama (`images[0]`).
+- [x] **Indikator Visual Thumbnail**:
+  - [x] Tambahkan dot pagination/bar indikator halus di bagian bawah thumbnail kartu untuk memberikan visual feedback posisi gambar yang sedang aktif.
 
 ---
 
-## 4. Implementasi Seksi Halaman (`src/sections/`)
+## 3. Pembuatan Modal Lightbox Preview Detail (`src/sections/ProjectsSection.vue`)
 
-- [x] **1. Hero / Introduction (`HeroSection.vue`)**
-  - [x] Menampilkan nama, peran utama, fokus sekunder, ringkasan singkat, dan foto profil.
-  - [x] Layout desktop: dua kolom (teks dan foto berdampingan).
-  - [x] Layout mobile: foto profil berada di atas teks.
-  - [x] Foto profil menggunakan frame 1:1 square via `ImageWithFallback.vue`.
-- [x] **2. About Me (`AboutSection.vue`)**
-  - [x] Menampilkan deskripsi latar belakang dan minat profesional murni dari `profile.json`.
-- [x] **3. Projects (`ProjectsSection.vue`)**
-  - [x] Menampilkan kartu proyek untuk setiap entri valid dari `projects.json`.
-  - [x] Urutan kartu sesuai dengan urutan di JSON.
-  - [x] Thumbnail proyek menggunakan rasio konsisten dan `object-fit: cover`.
-  - [x] Tampilkan badges teknologi yang digunakan.
-  - [x] Tautan GitHub repository sebagai aksi utama (`target="_blank" rel="noopener noreferrer"`).
-  - [x] Elemen opsional yang kosong disembunyikan secara otomatis.
-- [x] **4. Skills (`SkillsSection.vue`)**
-  - [x] Menampilkan skill yang dikelompokkan berdasarkan kategori.
-  - [x] Badge minimalis berisi teks nama teknologi saja (tanpa icon teknologi atau bar keahlian).
-  - [x] Urutan kategori dan item sesuai data di `skills.json`.
-- [x] **5. Experience & Education (`ExperienceEducationSection.vue`)**
-  - [x] Menggunakan format vertical timeline yang rapi.
-  - [x] Mendukung entri Education, Professional Work, dan Internship.
-  - [x] Hanya merender field yang memiliki konten riil.
-- [x] **6. Contact (`ContactSection.vue`)**
-  - [x] Tautan langsung ke Email, GitHub, dan LinkedIn jika nilainya valid.
-  - [x] Tidak menyertakan form kontak ber-backend.
+- [x] **Struktur & Animasi Modal (Referensi `CertificatesSection.vue`)**:
+  - [x] Buat dialog modal menggunakan `<Teleport to="body">` dengan transisi fade & zoom halus.
+  - [x] Klik pada kartu/thumbnail proyek membuka modal preview.
+  - [x] Cegah event bubbling (`@click.stop`) pada tombol link GitHub agar klik tautan tidak memicu modal.
+- [x] **Galeri Interaktif Modal**:
+  - [x] Tampilkan gambar aktif dalam ukuran besar menggunakan `ImageWithFallback` dengan `aspect-ratio` responsif dan `object-contain`.
+  - [x] Tambahkan tombol navigasi panah Kiri (`ChevronLeft`) dan Kanan (`ChevronRight`) dengan rotasi sirkuler.
+  - [x] Tambahkan indikator nomor gambar (misal: "1 / 4").
+  - [x] Tambahkan deretan thumbnail kecil (*thumbnail strip*) di bawah gambar untuk memilih gambar secara langsung.
+- [x] **Detail Konten Lengkap (Mengatasi Teks Terpotong)**:
+  - [x] Tampilkan judul proyek secara utuh.
+  - [x] Tampilkan seluruh deskripsi proyek tanpa pemotongan baris (`line-clamp-4` dihapus pada modal).
+  - [x] Tampilkan seluruh badge teknologi (`technologies`).
+  - [x] Tampilkan tombol aksi GitHub repository (*Source Code*) atau status *Private Repository*.
+- [x] **Aksesibilitas & Keyboard Navigation**:
+  - [x] Kunci scroll body (`document.body.style.overflow = 'hidden'`) saat modal terbuka.
+  - [x] Dukungan tombol `Escape` untuk menutup modal.
+  - [x] Dukungan tombol panah keyboard (`ArrowLeft` / `ArrowRight`) untuk navigasi gambar di modal.
+  - [x] Tombol tutup modal (`X`) dan kemampuan menutup modal dengan mengklik area backdrop luar.
 
 ---
 
-## 5. Tata Letak, Motion & Aksesibilitas
+## 4. Pengujian & Verifikasi Kualitas
 
-- [x] **Assembling di `src/App.vue`**
-  - [x] Susun layout: Header/Navbar, Hero, About, Projects, Skills, Experience, Contact, dan Footer.
-- [x] **Responsivitas & Layout**
-  - [x] Uji tampilan pada ukuran mobile (< 640px), tablet (640px - 1024px), dan desktop (> 1024px).
-  - [x] Pastikan tidak ada horizontal scrollbar (overflow-x).
-- [x] **Aksesibilitas (a11y)**
-  - [x] Struktur HTML semantik (`<header>`, `<nav>`, `<main>`, `<section>`, `<footer>`).
-  - [x] Hierarki heading (`<h1>`, `<h2>`, `<h3>`) yang logis.
-  - [x] Atribut `alt` bermakna pada gambar asli.
-  - [x] Kontras warna teks dan elemen interaktif memenuhi standar di kedua tema.
-  - [x] Atribut ARIA dan accessible name pada tombol toggle tema dan hamburger menu.
-- [x] **Dukungan `prefers-reduced-motion`**
-  - [x] Efek transisi/animasi diminimalkan atau dinonaktifkan jika pengguna mengaktifkan preferensi reduced motion di sistem operasi.
-
----
-
-## 6. Build & CI/CD Deployment
-
-- [x] **Otomasi GitHub Actions (`.github/workflows/deploy.yml`)**
-  - [x] Trigger on push ke branch `main`.
-  - [x] Setup Node.js dan install dependensi dengan `npm ci`.
-  - [x] Eksekusi build static (`npm run build`).
-  - [x] Upload artifact dari direktori `dist/`.
-  - [x] Deploy ke GitHub Pages menggunakan action resmi GitHub (`actions/deploy-pages`).
-- [x] **Verifikasi Build Lokal**
-  - [x] Jalankan `npm run build` dan pastikan tidak ada error.
-  - [x] Uji hasil build melalui `npm run preview` dengan subpath `/portfolio/`.
-
----
-
-## 7. Dokumentasi Proyek (`docs.md`)
-
-- [x] Buat file `docs.md` yang memuat:
-  - [x] Deskripsi tujuan proyek dan stack teknologi.
-  - [x] Panduan instalasi dan menjalankan server dev lokal.
-  - [x] Perintah build dan preview produksi.
-  - [x] Penjelasan struktur direktori dan komponen utama.
-  - [x] Struktur data JSON dan panduan update konten (profil, proyek, skill, pengalaman).
-  - [x] Panduan penambahan dan penggantian aset gambar.
-  - [x] Mekanisme kerja tema Dark/Light.
-  - [x] Konfigurasi Vite `base` path untuk GitHub Pages.
-  - [x] Alur kerja GitHub Actions & pengaturan repository GitHub Pages.
-
----
-
-## 8. Verifikasi Kriteria Penerimaan Akhir (Acceptance Sign-off)
-
-- [x] Semua 6 seksi tampil berurutan dalam satu halaman.
-- [x] Tidak ada halaman detail proyek terpisah atau unduhan CV.
-- [x] Tidak ada data fiktif atau tautan rusak.
-- [x] Dark mode default bekerja tanpa flash, dan toggle tema berfungsi baik.
-- [x] Image fallback berfungsi konsisten saat gambar gagal/kosong.
-- [x] Build produksi menghasilkan aset statis tanpa error di path `/portfolio/`.
-- [x] Dokumentasi `docs.md` lengkap dan mudah dipahami.
+- [x] **Uji Kasus Variasi Jumlah Gambar**:
+  - [x] 0 gambar: fallback "Image unavailable" tampil rapi tanpa error.
+  - [x] 1 gambar: thumbnail statis, tidak ada slideshow hover, modal menampilkan 1 gambar tanpa tombol navigasi.
+  - [x] 2–4 gambar: hover seketika berpindah ke gambar 2, slideshow berjalan mulus, navigasi modal dan thumbnail strip berfungsi sempurna.
+- [x] **Uji Responsivitas**:
+  - [x] Tampilan modal dan kartu berjalan optimal di layar mobile, tablet, dan desktop.
+- [x] **Uji Build Produksi**:
+  - [x] Jalankan `npm run build` dan pastikan build selesai 100% tanpa error kompilasi atau peringatan missing asset.

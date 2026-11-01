@@ -1,0 +1,23 @@
+[
+  {
+    "title": "AWS Certified Solutions Architect – Associate",
+    "issuer": "Amazon Web Services",
+    "date": "Nov 2024 – Nov 2027",
+    "image": "/images/certificates/aws-csa.png",
+    "skills": ["Cloud Architecture", "AWS", "Infrastructure"]
+  },
+  {
+    "title": "Sertifikasi Pengembang Web Profesional",
+    "issuer": "Badan Nasional Sertifikasi Profesi (BNSP)",
+    "date": "Aug 2023 – Aug 2026",
+    "image": "/images/certificates/bnsp-web.png",
+    "skills": ["Web Development", "REST API", "Database Design"]
+  },
+  {
+    "title": "Menjadi Front-End Web Developer Expert",
+    "issuer": "Dicoding Indonesia",
+    "date": "Jan 2023",
+    "image": "/images/certificates/dicoding-frontend.png",
+    "skills": ["JavaScript", "Progressive Web Apps", "Web Performance"]
+  }
+]

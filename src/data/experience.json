@@ -2,7 +2,7 @@
   {
     "type": "work",
     "title": "Full Stack Developer",
-    "institution": "Tech Solution Studio",
+    "company": "Tech Solution Studio",
     "period": "2023 - Present",
     "summary": "Building and maintaining full stack web applications with a focus on scalable backend services and responsive client interfaces.",
     "responsibilities": [
@@ -26,7 +26,7 @@
   {
     "type": "internship",
     "title": "Backend Engineering Intern",
-    "institution": "Data & Software Labs",
+    "company": "Data & Software Labs",
     "period": "2022 - 2023",
     "summary": "Assisted senior backend engineers in developing internal APIs and data extraction pipelines.",
     "responsibilities": [
@@ -41,16 +41,6 @@
       "Express.js",
       "MySQL",
       "Git"
-    ]
-  },
-  {
-    "type": "education",
-    "title": "Bachelor of Computer Science",
-    "institution": "University Faculty of Computer Science",
-    "period": "2019 - 2023",
-    "summary": "Graduated with honors. Completed coursework in Algorithms & Data Structures, Database Systems, Software Engineering, and Data Mining.",
-    "achievements": [
-      "Final Project: Design and Implementation of an Analytical Data Aggregation System."
     ]
   }
 ]

@@ -78,15 +78,19 @@ portfolio/
 │   │   ├── profile.json        # Bio, hero text, and direct contact URLs
 │   │   ├── projects.json       # Array of project cards
 │   │   ├── skills.json         # Array of categorized technical proficiencies
-│   │   └── experience-education.json # Work, internship, and education timeline
+│   │   ├── experience.json     # Professional work and internship timeline
+│   │   ├── education.json      # Formal education history (SMK, University)
+│   │   └── certificates.json   # Certifications, licenses, and course credentials
 │   ├── lib/
 │   │   └── utils.js            # Class merger utility helper (cn)
-│   ├── sections/               # The 6 main single-page sections (rendered in order)
+│   ├── sections/               # The single-page sections (rendered in order)
 │   │   ├── HeroSection.vue     # Intro with two-column desktop layout & 1:1 photo
 │   │   ├── AboutSection.vue    # Detailed background and professional interests
-│   │   ├── ProjectsSection.vue # Project cards with technology badges & repo links
+│   │   ├── ProjectsSection.vue # Project cards with multi-image hover slideshow & detail preview modal
 │   │   ├── SkillsSection.vue   # Grouped skills badges (names only, no icons/bars)
-│   │   ├── ExperienceEducationSection.vue # Vertical timeline entries
+│   │   ├── ExperienceSection.vue # Vertical timeline for work history
+│   │   ├── EducationSection.vue  # Vertical timeline for education background
+│   │   ├── CertificatesSection.vue # Grid cards with image preview/zoom modal
 │   │   └── ContactSection.vue  # Direct links to Email, GitHub, and LinkedIn
 │   ├── App.vue                 # Root component assembling all sections
 │   ├── main.js                 # App entry point
@@ -126,19 +130,22 @@ Contains developer profile details and contact links:
 *Note: If `email`, `github`, or `linkedin` is empty, its button will automatically be hidden in the Contact section.*
 
 ### 4.2 `projects.json`
-Array of project entries displayed in the order they appear:
+Array of project entries displayed in the order they appear (supports dynamic multi-image gallery per project):
 ```json
 [
   {
     "title": "Project Title",
     "description": "Short project description.",
-    "image": "images/project-thumbnail.png",
+    "images": [
+      "src/assets/projects/1.png",
+      "src/assets/projects/2.png"
+    ],
     "technologies": ["Vue 3", "Node.js", "PostgreSQL"],
     "githubUrl": "https://github.com/yourusername/repo"
   }
 ]
 ```
-*Note: `image` is optional. If left empty, the fallback placeholder or text-focused card is handled gracefully.*
+*Note: `images` is a dynamic array of image paths (with `images[0]` as the primary thumbnail). On card hover, it immediately transitions to image 2 and starts an auto-slideshow. Clicking a card opens a full modal preview with full un-truncated description, thumbnail strip, and gallery navigation.*
 
 ### 4.3 `skills.json`
 Skills grouped by category:
@@ -152,26 +159,59 @@ Skills grouped by category:
 ```
 *Note: PRD rules require technology names only. Do not add technology logos or proficiency percentage meters.*
 
-### 4.4 `experience-education.json`
-Vertical timeline items for work, internships, and education:
+### 4.4 `experience.json`
+Vertical timeline items for work and internships:
 ```json
 [
   {
     "type": "work",
     "title": "Full Stack Developer",
-    "institution": "Company Name",
+    "company": "Tech Solution Studio",
     "period": "2023 - Present",
-    "summary": "Overview of duties.",
-    "responsibilities": ["Responsibility 1", "Responsibility 2"],
-    "achievements": ["Achievement 1"],
-    "technologies": ["Vue.js", "Docker"]
+    "summary": "Building and maintaining full stack web applications.",
+    "responsibilities": ["Design RESTful services", "Optimize queries"],
+    "achievements": ["Reduced latency by 35%"],
+    "technologies": ["Vue 3", "Node.js", "PostgreSQL"]
+  }
+]
+```
+
+### 4.5 `education.json`
+Vertical timeline items for formal academic and vocational qualifications:
+```json
+[
+  {
+    "institution": "University Faculty of Computer Science",
+    "degree": "Bachelor of Computer Science (S1)",
+    "period": "2019 - 2023",
+    "gpa": "3.85 / 4.00",
+    "description": "Graduated with honors. Completed coursework in Algorithms and Software Engineering."
   },
   {
-    "type": "education",
-    "title": "B.S. in Computer Science",
-    "institution": "University Name",
-    "period": "2019 - 2023",
-    "summary": "Graduated with honors."
+    "institution": "SMK Negeri 1",
+    "degree": "Rekayasa Perangkat Lunak (RPL)",
+    "period": "2016 - 2019",
+    "gpa": "88.5 / 100"
+  }
+]
+```
+
+### 4.6 `certificates.json`
+Grid cards for certifications, credentials, and licenses with lightbox preview:
+```json
+[
+  {
+    "title": "AWS Certified Solutions Architect – Associate",
+    "issuer": "Amazon Web Services",
+    "date": "Nov 2024 – Nov 2027",
+    "image": "/images/certificates/aws-csa.png",
+    "skills": ["Cloud Architecture", "AWS"]
+  },
+  {
+    "title": "Menjadi Front-End Web Developer Expert",
+    "issuer": "Dicoding Indonesia",
+    "date": "Jan 2023",
+    "image": "/images/certificates/dicoding-frontend.png"
   }
 ]
 ```
@@ -191,10 +231,13 @@ Store local images in `public/images/`.
 3. Vite serves assets from `public/` at the base URL, which works seamlessly with GitHub Pages.
 
 ### Adding Project Thumbnails
-1. Place thumbnail images (recommended aspect ratio: 16:9) in `public/images/`.
-2. Reference the path in `src/data/projects.json`:
+1. Place thumbnail images (recommended aspect ratio: 16:9) in `public/images/` or `src/assets/projects/`.
+2. Reference the paths in `src/data/projects.json` within the `images` array:
    ```json
-   "image": "images/project1.png"
+   "images": [
+     "src/assets/projects/1.png",
+     "src/assets/projects/2.png"
+   ]
    ```
 3. If an image path is invalid or the image fails to load, `ImageWithFallback.vue` will catch the error and display a neutral placeholder with an `image-off` icon and *"Image unavailable"* label without breaking the layout.
 
