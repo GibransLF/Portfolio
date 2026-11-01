@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import {
   ExternalLink,
   Lock,
@@ -69,16 +69,137 @@ const validProjects = computed(() => {
     })
 })
 
-// --- Card Hover Slideshow Management ---
+// --- Pagination Management (matching CertificatesSection / Certifications & Licenses) ---
+const ITEMS_PER_PAGE = 3
+const currentPage = ref(1)
+
+const totalPages = computed(() => {
+  return Math.ceil(validProjects.value.length / ITEMS_PER_PAGE) || 1
+})
+
+const paginatedProjects = computed(() => {
+  const start = (currentPage.value - 1) * ITEMS_PER_PAGE
+  return validProjects.value.slice(start, start + ITEMS_PER_PAGE)
+})
+
+const goToPage = (page) => {
+  if (page < 1 || page > totalPages.value || page === currentPage.value) return
+  currentPage.value = page
+}
+
+watch(totalPages, (newTotal) => {
+  if (currentPage.value > newTotal) {
+    currentPage.value = Math.max(1, newTotal)
+  }
+})
+
+// --- Card Hover & Mobile Viewport Slideshow Management ---
 // Tracks active image index per project card
 const cardActiveIndices = ref({})
 // Stores interval IDs for cleanup
 const cardIntervals = {}
+// Map of project card DOM elements
+const cardRefs = new Map()
+
+const isTouchDevice = () => {
+  if (typeof window === 'undefined') return false
+  return (
+    !window.matchMedia('(hover: hover) and (pointer: fine)').matches ||
+    window.innerWidth < 768
+  )
+}
 
 const getCardImage = (project) => {
   if (!project.images || project.images.length === 0) return ''
   const activeIdx = cardActiveIndices.value[project.id] ?? 0
   return project.images[activeIdx] || project.images[0]
+}
+
+// Mobile auto-slideshow when visible in viewport
+const startMobileAutoSlide = (projectId, total) => {
+  if (!total || total <= 1) return
+  if (cardIntervals[projectId]) return
+
+  cardIntervals[projectId] = setInterval(() => {
+    const current = cardActiveIndices.value[projectId] ?? 0
+    cardActiveIndices.value[projectId] = (current + 1) % total
+  }, 2600)
+}
+
+const stopMobileAutoSlide = (projectId) => {
+  if (cardIntervals[projectId]) {
+    clearInterval(cardIntervals[projectId])
+    delete cardIntervals[projectId]
+  }
+}
+
+// Intersection Observer for mobile viewport detection
+let observer = null
+
+const initObserver = () => {
+  if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      if (!isTouchDevice()) return
+
+      entries.forEach((entry) => {
+        const id = entry.target.dataset.projectId
+        if (id === undefined) return
+        const projectId = Number(id)
+        const cardData = cardRefs.get(projectId)
+        const count = cardData?.count || 0
+
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.4) {
+          startMobileAutoSlide(projectId, count)
+        } else {
+          stopMobileAutoSlide(projectId)
+        }
+      })
+    },
+    {
+      threshold: [0, 0.4, 0.8],
+      rootMargin: '0px 0px -5% 0px',
+    }
+  )
+
+  if (isTouchDevice()) {
+    cardRefs.forEach(({ el }) => {
+      if (el) observer.observe(el)
+    })
+  }
+}
+
+const registerCardRef = (el, id, count) => {
+  if (el) {
+    cardRefs.set(id, { el, count })
+    if (observer && isTouchDevice()) {
+      observer.observe(el)
+    }
+  } else {
+    const existing = cardRefs.get(id)
+    if (existing && observer) {
+      observer.unobserve(existing.el)
+    }
+    cardRefs.delete(id)
+    stopMobileAutoSlide(id)
+  }
+}
+
+const handleResize = () => {
+  if (isTouchDevice()) {
+    if (observer) {
+      cardRefs.forEach(({ el }) => {
+        if (el) observer.observe(el)
+      })
+    }
+  } else {
+    // Desktop: clear any lingering mobile intervals
+    cardRefs.forEach((_, id) => {
+      stopMobileAutoSlide(id)
+      cardActiveIndices.value[id] = 0
+    })
+  }
 }
 
 const handleMouseEnterCard = (project) => {
@@ -101,6 +222,8 @@ const handleMouseEnterCard = (project) => {
 }
 
 const handleMouseLeaveCard = (project) => {
+  if (isTouchDevice()) return
+
   if (cardIntervals[project.id]) {
     clearInterval(cardIntervals[project.id])
     delete cardIntervals[project.id]
@@ -118,12 +241,28 @@ const openModal = (project, initialIndex = 0) => {
   const maxIdx = Math.max(0, project.images.length - 1)
   modalActiveImageIndex.value = Math.min(Math.max(0, initialIndex), maxIdx)
   document.body.style.overflow = 'hidden'
+
+  // Pause card slideshow intervals while modal is open
+  Object.keys(cardIntervals).forEach((key) => {
+    clearInterval(cardIntervals[key])
+    delete cardIntervals[key]
+  })
 }
 
 const closeModal = () => {
   selectedProject.value = null
   modalActiveImageIndex.value = 0
   document.body.style.overflow = ''
+
+  // On mobile, re-evaluate viewport observation
+  if (isTouchDevice() && observer) {
+    cardRefs.forEach(({ el }) => {
+      if (el) {
+        observer.unobserve(el)
+        observer.observe(el)
+      }
+    })
+  }
 }
 
 const nextModalImage = () => {
@@ -157,10 +296,17 @@ const handleKeydown = (e) => {
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown)
+  window.addEventListener('resize', handleResize)
+  initObserver()
 })
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown)
+  window.removeEventListener('resize', handleResize)
+  if (observer) {
+    observer.disconnect()
+    observer = null
+  }
   document.body.style.overflow = ''
   // Clean all card slideshow intervals
   Object.values(cardIntervals).forEach((intervalId) => clearInterval(intervalId))
@@ -184,117 +330,200 @@ onUnmounted(() => {
         </p>
       </div>
 
-      <!-- Project Cards Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <article
-          v-for="project in validProjects"
-          :key="project.id"
-          class="group flex flex-col justify-between rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-foreground/30 cursor-pointer select-none"
-          tabindex="0"
-          role="button"
-          :aria-label="`View details and gallery for ${project.title}`"
-          @click="openModal(project, cardActiveIndices[project.id] || 0)"
-          @keydown.enter="openModal(project, cardActiveIndices[project.id] || 0)"
-          @keydown.space.prevent="openModal(project, cardActiveIndices[project.id] || 0)"
-          @mouseenter="handleMouseEnterCard(project)"
-          @mouseleave="handleMouseLeaveCard(project)"
+      <!-- Project Cards Grid with Page Transition -->
+      <Transition
+        mode="out-in"
+        enter-active-class="transition-opacity duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-opacity duration-150 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div
+          :key="currentPage"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          <div class="space-y-4">
-            <!-- Thumbnail Image with Hover Slideshow & Fallback -->
-            <div
-              v-if="project.images && project.images.length > 0"
-              class="relative w-full aspect-video overflow-hidden rounded-lg bg-muted/40 border border-border/50"
-            >
-              <ImageWithFallback
-                :src="getCardImage(project)"
-                :alt="project.title"
-                aspect-ratio="aspect-video w-full h-full"
-                image-class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-              />
-
-              <!-- Multi-image badge indicator -->
+          <article
+            v-for="project in paginatedProjects"
+            :key="project.id"
+            :ref="(el) => registerCardRef(el, project.id, project.images.length)"
+            :data-project-id="project.id"
+            class="group flex flex-col justify-between rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-foreground/30 cursor-pointer select-none"
+            tabindex="0"
+            role="button"
+            :aria-label="`View details and gallery for ${project.title}`"
+            @click="openModal(project, cardActiveIndices[project.id] || 0)"
+            @keydown.enter="openModal(project, cardActiveIndices[project.id] || 0)"
+            @keydown.space.prevent="openModal(project, cardActiveIndices[project.id] || 0)"
+            @mouseenter="handleMouseEnterCard(project)"
+            @mouseleave="handleMouseLeaveCard(project)"
+          >
+            <div class="space-y-4">
+              <!-- Thumbnail Image with Hover Slideshow & Fallback -->
               <div
-                v-if="project.images.length > 1"
-                class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-background/80 backdrop-blur-sm text-[11px] font-semibold text-foreground flex items-center gap-1 shadow-sm border border-border/50"
-                aria-label="Project images count"
+                v-if="project.images && project.images.length > 0"
+                class="relative w-full aspect-video overflow-hidden rounded-lg bg-muted/40 border border-border/50"
               >
-                <Images class="w-3.5 h-3.5 text-primary" aria-hidden="true" />
-                <span>{{ project.images.length }}</span>
+                <ImageWithFallback
+                  :src="getCardImage(project)"
+                  :alt="project.title"
+                  aspect-ratio="aspect-video w-full h-full"
+                  image-class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                />
+
+                <!-- Multi-image badge indicator -->
+                <div
+                  v-if="project.images.length > 1"
+                  class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-background/80 backdrop-blur-sm text-[11px] font-semibold text-foreground flex items-center gap-1 shadow-sm border border-border/50"
+                  aria-label="Project images count"
+                >
+                  <Images class="w-3.5 h-3.5 text-primary" aria-hidden="true" />
+                  <span>{{ project.images.length }}</span>
+                </div>
+
+                <!-- Dot indicators for slideshow progress -->
+                <div
+                  v-if="project.images.length > 1"
+                  class="absolute bottom-2.5 inset-x-0 flex items-center justify-center gap-1.5 z-10 pointer-events-none"
+                  aria-hidden="true"
+                >
+                  <span
+                    v-for="(_, dotIdx) in project.images"
+                    :key="dotIdx"
+                    :class="[
+                      'h-1.5 rounded-full transition-all duration-300',
+                      (cardActiveIndices[project.id] ?? 0) === dotIdx
+                        ? 'w-4 bg-primary shadow-sm'
+                        : 'w-1.5 bg-background/70 backdrop-blur-sm border border-border/40'
+                    ]"
+                  />
+                </div>
               </div>
 
-              <!-- Dot indicators for slideshow progress -->
+              <div class="space-y-2">
+                <h3 class="text-lg font-semibold tracking-tight text-card-foreground group-hover:text-primary transition-colors">
+                  {{ project.title }}
+                </h3>
+                <!-- Description truncated on card (opens modal for complete text) -->
+                <p
+                  v-if="project.description"
+                  class="text-sm text-muted-foreground leading-relaxed line-clamp-3"
+                >
+                  {{ project.description }}
+                </p>
+              </div>
+            </div>
+
+            <div class="pt-5 space-y-4 mt-auto">
+              <!-- Technologies Badges -->
               <div
-                v-if="project.images.length > 1"
-                class="absolute bottom-2.5 inset-x-0 flex items-center justify-center gap-1.5 z-10 pointer-events-none"
-                aria-hidden="true"
+                v-if="project.technologies && project.technologies.length > 0"
+                class="flex flex-wrap gap-1.5"
               >
                 <span
-                  v-for="(_, dotIdx) in project.images"
-                  :key="dotIdx"
-                  :class="[
-                    'h-1.5 rounded-full transition-all duration-300',
-                    (cardActiveIndices[project.id] ?? 0) === dotIdx
-                      ? 'w-4 bg-primary shadow-sm'
-                      : 'w-1.5 bg-background/70 backdrop-blur-sm border border-border/40'
-                  ]"
-                />
+                  v-for="(tech, tIdx) in project.technologies"
+                  :key="tIdx"
+                  class="inline-flex items-center rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground border border-border/50"
+                >
+                  {{ tech }}
+                </span>
+              </div>
+
+              <!-- GitHub Action Link or Private Indicator -->
+              <div class="pt-2 border-t border-border/50 flex items-center justify-between">
+                <a
+                  v-if="project.githubUrl && project.githubUrl.trim().length > 0"
+                  :href="project.githubUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground hover:text-foreground/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm py-1"
+                  :aria-label="`View source code for ${project.title} on GitHub (opens in a new tab)`"
+                  @click.stop
+                >
+                  <GithubIcon class="w-4 h-4" />
+                  <span>Source Code</span>
+                  <ExternalLink class="w-3.5 h-3.5 opacity-70" aria-hidden="true" />
+                </a>
+                <div
+                  v-else
+                  class="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground select-none py-1"
+                >
+                  <Lock class="w-3.5 h-3.5 opacity-80" aria-hidden="true" />
+                  <span>Private Repository</span>
+                </div>
               </div>
             </div>
+          </article>
+        </div>
+      </Transition>
 
-            <div class="space-y-2">
-              <h3 class="text-lg font-semibold tracking-tight text-card-foreground group-hover:text-primary transition-colors">
-                {{ project.title }}
-              </h3>
-              <!-- Description truncated on card (opens modal for complete text) -->
-              <p
-                v-if="project.description"
-                class="text-sm text-muted-foreground leading-relaxed line-clamp-3"
-              >
-                {{ project.description }}
-              </p>
-            </div>
-          </div>
+      <!-- Pagination Controls (Matching Certifications & Licenses) -->
+      <div
+        v-if="validProjects.length > 0"
+        class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-border/40"
+      >
+        <!-- Showing entries info -->
+        <p class="text-xs sm:text-sm text-muted-foreground order-2 sm:order-1 text-center sm:text-left">
+          Showing
+          <span class="font-medium text-foreground">
+            {{ (currentPage - 1) * ITEMS_PER_PAGE + 1 }}
+          </span>
+          to
+          <span class="font-medium text-foreground">
+            {{ Math.min(currentPage * ITEMS_PER_PAGE, validProjects.length) }}
+          </span>
+          of
+          <span class="font-medium text-foreground">
+            {{ validProjects.length }}
+          </span>
+          projects
+        </p>
 
-          <div class="pt-5 space-y-4 mt-auto">
-            <!-- Technologies Badges -->
-            <div
-              v-if="project.technologies && project.technologies.length > 0"
-              class="flex flex-wrap gap-1.5"
-            >
-              <span
-                v-for="(tech, tIdx) in project.technologies"
-                :key="tIdx"
-                class="inline-flex items-center rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground border border-border/50"
-              >
-                {{ tech }}
-              </span>
-            </div>
+        <!-- Page Link Navigation Buttons -->
+        <nav
+          class="inline-flex items-center gap-1.5 order-1 sm:order-2"
+          aria-label="Projects pagination navigation"
+        >
+          <!-- Prev Button -->
+          <button
+            type="button"
+            :disabled="currentPage === 1"
+            class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer disabled:pointer-events-none"
+            aria-label="Previous page"
+            @click="goToPage(currentPage - 1)"
+          >
+            <ChevronLeft class="h-4 w-4" />
+          </button>
 
-            <!-- GitHub Action Link or Private Indicator -->
-            <div class="pt-2 border-t border-border/50 flex items-center justify-between">
-              <a
-                v-if="project.githubUrl && project.githubUrl.trim().length > 0"
-                :href="project.githubUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground hover:text-foreground/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm py-1"
-                :aria-label="`View source code for ${project.title} on GitHub (opens in a new tab)`"
-                @click.stop
-              >
-                <GithubIcon class="w-4 h-4" />
-                <span>Source Code</span>
-                <ExternalLink class="w-3.5 h-3.5 opacity-70" aria-hidden="true" />
-              </a>
-              <div
-                v-else
-                class="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground select-none py-1"
-              >
-                <Lock class="w-3.5 h-3.5 opacity-80" aria-hidden="true" />
-                <span>Private Repository</span>
-              </div>
-            </div>
-          </div>
-        </article>
+          <!-- Numbered Page Links -->
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            type="button"
+            :aria-current="currentPage === page ? 'page' : undefined"
+            :class="[
+              'inline-flex h-9 min-w-9 px-3 items-center justify-center rounded-lg text-xs sm:text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer',
+              currentPage === page
+                ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                : 'border border-border bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+            ]"
+            @click="goToPage(page)"
+          >
+            {{ page }}
+          </button>
+
+          <!-- Next Button -->
+          <button
+            type="button"
+            :disabled="currentPage === totalPages"
+            class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer disabled:pointer-events-none"
+            aria-label="Next page"
+            @click="goToPage(currentPage + 1)"
+          >
+            <ChevronRight class="h-4 w-4" />
+          </button>
+        </nav>
       </div>
     </div>
 

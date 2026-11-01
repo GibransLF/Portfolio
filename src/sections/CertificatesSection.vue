@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { Calendar, Award, ZoomIn, X } from '@lucide/vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { Calendar, Award, ZoomIn, X, ChevronLeft, ChevronRight } from '@lucide/vue'
 import ImageWithFallback from '@/components/ImageWithFallback.vue'
 import rawCertificates from '@/data/certificates.json'
 
@@ -9,6 +9,29 @@ const validCertificates = computed(() => {
   return rawCertificates.filter(
     (c) => c && typeof c === 'object' && typeof c.title === 'string' && c.title.trim().length > 0
   )
+})
+
+const ITEMS_PER_PAGE = 3
+const currentPage = ref(1)
+
+const totalPages = computed(() => {
+  return Math.ceil(validCertificates.value.length / ITEMS_PER_PAGE) || 1
+})
+
+const paginatedCertificates = computed(() => {
+  const start = (currentPage.value - 1) * ITEMS_PER_PAGE
+  return validCertificates.value.slice(start, start + ITEMS_PER_PAGE)
+})
+
+const goToPage = (page) => {
+  if (page < 1 || page > totalPages.value || page === currentPage.value) return
+  currentPage.value = page
+}
+
+watch(totalPages, (newTotal) => {
+  if (currentPage.value > newTotal) {
+    currentPage.value = Math.max(1, newTotal)
+  }
 })
 
 const selectedCert = ref(null)
@@ -56,74 +79,155 @@ onUnmounted(() => {
         </p>
       </div>
 
-      <!-- Certificate Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <article
-          v-for="(item, idx) in validCertificates"
-          :key="idx"
-          class="group flex flex-col rounded-xl border border-border/60 bg-card p-4 transition-all duration-200 hover:border-foreground/30 hover:shadow-md cursor-pointer select-none"
-          tabindex="0"
-          role="button"
-          :aria-label="`View full certificate for ${item.title}`"
-          @click="openModal(item)"
-          @keydown.enter="openModal(item)"
-          @keydown.space.prevent="openModal(item)"
+      <!-- Certificate Grid with Page Transition -->
+      <Transition
+        mode="out-in"
+        enter-active-class="transition-opacity duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-opacity duration-150 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div
+          :key="currentPage"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          <!-- Thumbnail Container with object-contain to support portrait, landscape, or square -->
-          <div class="relative w-full aspect-[16/10] rounded-lg bg-muted/40 border border-border/50 overflow-hidden flex items-center justify-center p-2">
-            <ImageWithFallback
-              :src="item.image"
-              :alt="item.title"
-              aspect-ratio="aspect-auto h-full w-full"
-              image-class="object-contain w-full h-full transition-transform duration-300 group-hover:scale-105"
-            />
+          <article
+            v-for="(item, idx) in paginatedCertificates"
+            :key="item.title + idx"
+            class="group flex flex-col rounded-xl border border-border/60 bg-card p-4 transition-all duration-200 hover:border-foreground/30 hover:shadow-md cursor-pointer select-none"
+            tabindex="0"
+            role="button"
+            :aria-label="`View full certificate for ${item.title}`"
+            @click="openModal(item)"
+            @keydown.enter="openModal(item)"
+            @keydown.space.prevent="openModal(item)"
+          >
+            <!-- Thumbnail Container with object-contain to support portrait, landscape, or square -->
+            <div class="relative w-full aspect-[16/10] rounded-lg bg-muted/40 border border-border/50 overflow-hidden flex items-center justify-center p-2">
+              <ImageWithFallback
+                :src="item.image"
+                :alt="item.title"
+                aspect-ratio="aspect-auto h-full w-full"
+                image-class="object-contain w-full h-full transition-transform duration-300 group-hover:scale-105"
+              />
 
-            <!-- Hover overlay indicator to signal preview / zoom capability -->
-            <div
-              class="absolute inset-0 bg-background/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-foreground font-medium text-xs sm:text-sm"
-              aria-hidden="true"
-            >
-              <ZoomIn class="w-4 h-4" />
-              <span>Preview</span>
+              <!-- Hover overlay indicator to signal preview / zoom capability -->
+              <div
+                class="absolute inset-0 bg-background/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-foreground font-medium text-xs sm:text-sm"
+                aria-hidden="true"
+              >
+                <ZoomIn class="w-4 h-4" />
+                <span>Preview</span>
+              </div>
             </div>
-          </div>
 
-          <!-- Card Content -->
-          <div class="flex-1 flex flex-col justify-between pt-4 space-y-3">
-            <div class="space-y-2">
-              <!-- Issuer & Date Meta -->
-              <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-                <span class="inline-flex items-center gap-1 font-semibold text-foreground/90">
-                  <Award class="w-3.5 h-3.5 text-primary" aria-hidden="true" />
-                  {{ item.issuer }}
-                </span>
-                <span v-if="item.date" class="inline-flex items-center gap-1">
-                  <Calendar class="w-3.5 h-3.5" aria-hidden="true" />
-                  {{ item.date }}
-                </span>
+            <!-- Card Content -->
+            <div class="flex-1 flex flex-col justify-between pt-4 space-y-3">
+              <div class="space-y-2">
+                <!-- Issuer & Date Meta -->
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+                  <span class="inline-flex items-center gap-1 font-semibold text-foreground/90">
+                    <Award class="w-3.5 h-3.5 text-primary" aria-hidden="true" />
+                    {{ item.issuer }}
+                  </span>
+                  <span v-if="item.date" class="inline-flex items-center gap-1">
+                    <Calendar class="w-3.5 h-3.5" aria-hidden="true" />
+                    {{ item.date }}
+                  </span>
+                </div>
+
+                <!-- Certificate Title -->
+                <h3 class="text-base font-bold tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                  {{ item.title }}
+                </h3>
               </div>
 
-              <!-- Certificate Title -->
-              <h3 class="text-base font-bold tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                {{ item.title }}
-              </h3>
-            </div>
-
-            <!-- Skills Badges (Optional) -->
-            <div
-              v-if="item.skills && item.skills.length > 0"
-              class="flex flex-wrap gap-1.5 pt-2 border-t border-border/40"
-            >
-              <span
-                v-for="(skill, sIdx) in item.skills"
-                :key="sIdx"
-                class="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground border border-border/40"
+              <!-- Skills Badges (Optional) -->
+              <div
+                v-if="item.skills && item.skills.length > 0"
+                class="flex flex-wrap gap-1.5 pt-2 border-t border-border/40"
               >
-                {{ skill }}
-              </span>
+                <span
+                  v-for="(skill, sIdx) in item.skills"
+                  :key="sIdx"
+                  class="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground border border-border/40"
+                >
+                  {{ skill }}
+                </span>
+              </div>
             </div>
-          </div>
-        </article>
+          </article>
+        </div>
+      </Transition>
+
+      <!-- Pagination Controls -->
+      <div
+        v-if="validCertificates.length > 0"
+        class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-border/40"
+      >
+        <!-- Showing entries info -->
+        <p class="text-xs sm:text-sm text-muted-foreground order-2 sm:order-1 text-center sm:text-left">
+          Showing
+          <span class="font-medium text-foreground">
+            {{ (currentPage - 1) * ITEMS_PER_PAGE + 1 }}
+          </span>
+          to
+          <span class="font-medium text-foreground">
+            {{ Math.min(currentPage * ITEMS_PER_PAGE, validCertificates.length) }}
+          </span>
+          of
+          <span class="font-medium text-foreground">
+            {{ validCertificates.length }}
+          </span>
+          certificates
+        </p>
+
+        <!-- Page Link Navigation Buttons -->
+        <nav
+          class="inline-flex items-center gap-1.5 order-1 sm:order-2"
+          aria-label="Certificates pagination navigation"
+        >
+          <!-- Prev Button -->
+          <button
+            type="button"
+            :disabled="currentPage === 1"
+            class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer disabled:pointer-events-none"
+            aria-label="Previous page"
+            @click="goToPage(currentPage - 1)"
+          >
+            <ChevronLeft class="h-4 w-4" />
+          </button>
+
+          <!-- Numbered Page Links -->
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            type="button"
+            :aria-current="currentPage === page ? 'page' : undefined"
+            :class="[
+              'inline-flex h-9 min-w-9 px-3 items-center justify-center rounded-lg text-xs sm:text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer',
+              currentPage === page
+                ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                : 'border border-border bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+            ]"
+            @click="goToPage(page)"
+          >
+            {{ page }}
+          </button>
+
+          <!-- Next Button -->
+          <button
+            type="button"
+            :disabled="currentPage === totalPages"
+            class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer disabled:pointer-events-none"
+            aria-label="Next page"
+            @click="goToPage(currentPage + 1)"
+          >
+            <ChevronRight class="h-4 w-4" />
+          </button>
+        </nav>
       </div>
     </div>
 

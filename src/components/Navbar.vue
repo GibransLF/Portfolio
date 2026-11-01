@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, nextTick } from 'vue'
 import { Menu, X } from '@lucide/vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 
@@ -24,11 +24,12 @@ const closeMobileMenu = () => {
   isMobileMenuOpen.value = false
 }
 
-const handleLinkClick = (e, href) => {
+const handleLinkClick = async (e, href) => {
+  e.preventDefault()
   closeMobileMenu()
+  await nextTick()
   const target = document.querySelector(href)
   if (target) {
-    e.preventDefault()
     target.scrollIntoView({ behavior: 'smooth' })
     // update URL hash without jump
     history.pushState(null, '', href)
@@ -82,19 +83,28 @@ const handleLinkClick = (e, href) => {
     </div>
 
     <!-- Mobile Navigation Drawer / Dropdown -->
-    <div
-      v-show="isMobileMenuOpen"
-      class="md:hidden border-b border-border bg-background px-4 pt-2 pb-4 space-y-1"
+    <transition
+      enter-active-class="transition duration-150 ease-out"
+      enter-from-class="opacity-0 -translate-y-2"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-active-class="transition duration-100 ease-in"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 -translate-y-2"
     >
-      <a
-        v-for="link in navLinks"
-        :key="link.href"
-        :href="link.href"
-        class="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        @click="(e) => handleLinkClick(e, link.href)"
+      <div
+        v-show="isMobileMenuOpen"
+        class="md:hidden absolute top-full left-0 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 shadow-lg px-4 pt-2 pb-4 space-y-1"
       >
-        {{ link.name }}
-      </a>
-    </div>
+        <a
+          v-for="link in navLinks"
+          :key="link.href"
+          :href="link.href"
+          class="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          @click="(e) => handleLinkClick(e, link.href)"
+        >
+          {{ link.name }}
+        </a>
+      </div>
+    </transition>
   </header>
 </template>

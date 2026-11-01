@@ -23,7 +23,7 @@ const validEntries = computed(() => {
         </h2>
         <div class="h-1 w-12 rounded bg-foreground/20"></div>
         <p class="text-sm sm:text-base text-muted-foreground">
-          Academic background, degrees, vocational training, and formal qualifications.
+          Academic background and degrees.
         </p>
       </div>
 
@@ -47,10 +47,10 @@ const validEntries = computed(() => {
                 {{ item.period }}
               </span>
               <span
-                v-if="item.gpa"
+                v-if="item.grade || item.gpa"
                 class="inline-flex items-center rounded bg-secondary px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-secondary-foreground border border-border/60"
               >
-                GPA / Nilai: {{ item.gpa }}
+                {{ item.grade || item.gpa }}
               </span>
             </div>
 

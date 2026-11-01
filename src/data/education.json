@@ -1,16 +1,16 @@
 [
   {
-    "institution": "University Faculty of Computer Science",
-    "degree": "Bachelor of Computer Science (S1)",
-    "period": "2019 - 2023",
-    "gpa": "3.85 / 4.00",
-    "description": "Graduated with honors. Completed coursework in Algorithms & Data Structures, Database Systems, Software Engineering, and Data Mining."
+    "institution": "STMIK Bandung",
+    "degree": "Bachelor of Information Systems (S1)",
+    "period": "2022 - 2026",
+    "grade": "GPA: 3.56 / 4.00",
+    "description": "Graduated with Cum Laude honors and received the Outstanding Undergraduate Thesis Award at the 35th STMIK Bandung Graduation Ceremony."
   },
   {
-    "institution": "SMK Negeri 1",
-    "degree": "Software Engineering (RPL)",
-    "period": "2016 - 2019",
-    "gpa": "88.5 / 100",
-    "description": "Focused on software engineering fundamentals, web programming, relational databases, and algorithms."
+    "institution": "SMK Negeri 1 Cianjur",
+    "degree": "Vocational High School - Software Engineering (RPL)",
+    "period": "2018 - 2021",
+    "grade": "Score Average: 82.21",
+    "description": "Studied Software Engineering, gaining foundational knowledge in programming, software development, and computer systems."
   }
 ]

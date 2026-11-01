@@ -8,22 +8,6 @@ const validEntries = computed(() => {
     (e) => e && typeof e === 'object' && typeof e.title === 'string' && e.title.trim().length > 0
   )
 })
-
-const getBadgeLabel = (type) => {
-  switch (type?.toLowerCase()) {
-    case 'work':
-    case 'full-time':
-      return 'Professional Experience'
-    case 'internship':
-      return 'Internship'
-    case 'freelance':
-      return 'Freelance'
-    case 'contract':
-      return 'Contract'
-    default:
-      return type || 'Experience'
-  }
-}
 </script>
 
 <template>
@@ -39,7 +23,7 @@ const getBadgeLabel = (type) => {
         </h2>
         <div class="h-1 w-12 rounded bg-foreground/20"></div>
         <p class="text-sm sm:text-base text-muted-foreground">
-          Professional roles, internships, software engineering milestones, and work history.
+          Professional roles, internships, and work history.
         </p>
       </div>
 
@@ -63,7 +47,7 @@ const getBadgeLabel = (type) => {
                 v-if="item.type"
                 class="inline-flex items-center rounded bg-secondary px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-secondary-foreground border border-border/60"
               >
-                {{ getBadgeLabel(item.type) }}
+                {{ item.type }}
               </span>
               <span v-if="item.period" class="text-xs sm:text-sm font-medium text-muted-foreground">
                 {{ item.period }}
@@ -76,8 +60,8 @@ const getBadgeLabel = (type) => {
             </h3>
 
             <!-- Company or Studio -->
-            <p v-if="item.company || item.institution" class="text-sm sm:text-base font-semibold text-foreground/80">
-              {{ item.company || item.institution }}
+            <p v-if="item.company" class="text-sm sm:text-base font-semibold text-foreground/80">
+              {{ item.company }}
             </p>
 
             <!-- Short Summary -->

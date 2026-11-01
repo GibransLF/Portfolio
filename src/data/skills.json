@@ -2,21 +2,19 @@
   {
     "category": "Frontend Development",
     "items": [
-      "Vue 3",
-      "JavaScript (ES6+)",
-      "HTML5",
-      "CSS3",
+      "Vue",
+      "Vite",
       "Tailwind CSS",
-      "Vite"
+      "Bootstrap"
     ]
   },
   {
     "category": "Backend Development",
     "items": [
-      "Node.js",
-      "Express.js",
-      "RESTful APIs",
-      "Go",
+      "Laravel",
+      "Livewire",
+      "PHP",
+      "FAST API",
       "Python"
     ]
   },
@@ -25,27 +23,16 @@
     "items": [
       "PostgreSQL",
       "MySQL",
-      "MongoDB",
       "Redis"
     ]
   },
   {
     "category": "DevOps & Tools",
     "items": [
-      "Git",
-      "GitHub Actions",
+      "Github",
       "Docker",
       "Linux",
       "Postman"
-    ]
-  },
-  {
-    "category": "Data Analytics",
-    "items": [
-      "Python",
-      "Pandas",
-      "SQL Data Analysis",
-      "Data Visualization"
     ]
   }
 ]

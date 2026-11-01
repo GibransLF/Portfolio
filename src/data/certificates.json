@@ -1,23 +1,51 @@
 [
   {
-    "title": "AWS Certified Solutions Architect – Associate",
-    "issuer": "Amazon Web Services",
-    "date": "Nov 2024 – Nov 2027",
-    "image": "/images/certificates/aws-csa.png",
-    "skills": ["Cloud Architecture", "AWS", "Infrastructure"]
+    "title": "Docker Containerization",
+    "issuer": "Digital Transformation Global Alliance (DTGA)",
+    "date": "Sep 2026",
+    "image": "src/assets/certificates/dtga-docker.jpg",
+    "skills": ["Docker", "Containerization", "DevOps"]
   },
   {
-    "title": "Sertifikasi Pengembang Web Profesional",
-    "issuer": "Badan Nasional Sertifikasi Profesi (BNSP)",
-    "date": "Aug 2023 – Aug 2026",
-    "image": "/images/certificates/bnsp-web.png",
-    "skills": ["Web Development", "REST API", "Database Design"]
+    "title": "Google Cloud Vision API",
+    "issuer": "Digital Transformation Global Alliance (DTGA)",
+    "date": "Sep 2026",
+    "image": "src/assets/certificates/dtga-gcp-vision.jpg",
+    "skills": ["Google Cloud", "Vision API", "Artificial Intelligence"]
   },
   {
-    "title": "Menjadi Front-End Web Developer Expert",
-    "issuer": "Dicoding Indonesia",
-    "date": "Jan 2023",
-    "image": "/images/certificates/dicoding-frontend.png",
-    "skills": ["JavaScript", "Progressive Web Apps", "Web Performance"]
+    "title": "Test of English Proficiency and Skill (TOEPS PBT)",
+    "issuer": "Neo Spectra English Course",
+    "date": "Jul 2026 - Jul 2027",
+    "image": "src/assets/certificates/neospectra-toeps.jpg",
+    "skills": ["English Proficiency", "TOEFL Prediction"]
+  },
+  {
+    "title": "Intro to Data Analytics",
+    "issuer": "RevoU",
+    "date": "Aug 2024",
+    "image": "src/assets/certificates/revou-data-analytics.jpg",
+    "skills": ["Data Analytics", "Data Analysis"]
+  },
+  {
+    "title": "Badan Adhoc Penyelenggara Pemilihan Umum (Pemilu 2024)",
+    "issuer": "Komisi Pemilihan Umum Republik Indonesia (KPU RI)",
+    "date": "Jun 2024",
+    "image": "src/assets/certificates/kpu-pemilu-2024.jpg",
+    "skills": ["Public Administration", "Election Administration", "Event Management"]
+  },
+  {
+    "title": "Kualifikasi Level II Rekayasa Perangkat Lunak",
+    "issuer": "Badan Nasional Sertifikasi Profesi (BNSP) / LSP SMK Negeri 1 Cianjur",
+    "date": "Apr 2021 - Apr 2024",
+    "image": "src/assets/certificates/bnsp-rpl.jpg",
+    "skills": ["Software Engineering", "Computer Programming", "BNSP"]
+  },
+  {
+    "title": "Praktik Kerja Lapangan (PKL)",
+    "issuer": "Dinas Komunikasi Informatika Persandian & Statistik Kabupaten Cianjur",
+    "date": "Mar 2020",
+    "image": "src/assets/certificates/PKL.jpg",
+    "skills": ["Microsoft Excel", "Microsoft Word"]
   }
 ]

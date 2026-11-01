@@ -90,7 +90,7 @@ portfolio/
 │   │   ├── SkillsSection.vue   # Grouped skills badges (names only, no icons/bars)
 │   │   ├── ExperienceSection.vue # Vertical timeline for work history
 │   │   ├── EducationSection.vue  # Vertical timeline for education background
-│   │   ├── CertificatesSection.vue # Grid cards with image preview/zoom modal
+│   │   ├── CertificatesSection.vue # Responsive cards with 3-item pagination & image preview/zoom modal
 │   │   └── ContactSection.vue  # Direct links to Email, GitHub, and LinkedIn
 │   ├── App.vue                 # Root component assembling all sections
 │   ├── main.js                 # App entry point
@@ -160,11 +160,11 @@ Skills grouped by category:
 *Note: PRD rules require technology names only. Do not add technology logos or proficiency percentage meters.*
 
 ### 4.4 `experience.json`
-Vertical timeline items for work and internships:
+Vertical timeline items for work and internships. The `type` field is displayed directly as a badge label (e.g., `"Full-Time"`, `"Internship"`, `"Contract"`, `"Freelance"`):
 ```json
 [
   {
-    "type": "work",
+    "type": "Full-Time",
     "title": "Full Stack Developer",
     "company": "Tech Solution Studio",
     "period": "2023 - Present",
@@ -177,27 +177,27 @@ Vertical timeline items for work and internships:
 ```
 
 ### 4.5 `education.json`
-Vertical timeline items for formal academic and vocational qualifications:
+Vertical timeline items for formal academic and vocational qualifications. The `grade` field allows flexible label formatting (e.g. `"GPA: 3.85 / 4.00"`, `"Final Score: 88.5 / 100"`):
 ```json
 [
   {
     "institution": "University Faculty of Computer Science",
     "degree": "Bachelor of Computer Science (S1)",
     "period": "2019 - 2023",
-    "gpa": "3.85 / 4.00",
+    "grade": "GPA: 3.85 / 4.00",
     "description": "Graduated with honors. Completed coursework in Algorithms and Software Engineering."
   },
   {
     "institution": "SMK Negeri 1",
     "degree": "Rekayasa Perangkat Lunak (RPL)",
     "period": "2016 - 2019",
-    "gpa": "88.5 / 100"
+    "grade": "Final Score: 88.5 / 100"
   }
 ]
 ```
 
 ### 4.6 `certificates.json`
-Grid cards for certifications, credentials, and licenses with lightbox preview:
+Grid cards for certifications, credentials, and licenses with 3-item-per-page pagination and lightbox preview:
 ```json
 [
   {

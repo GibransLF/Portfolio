@@ -1,46 +1,43 @@
 [
   {
-    "type": "work",
-    "title": "Full Stack Developer",
-    "company": "Tech Solution Studio",
-    "period": "2023 - Present",
-    "summary": "Building and maintaining full stack web applications with a focus on scalable backend services and responsive client interfaces.",
+    "type": "School Internship",
+    "title": "Vocational Student Trainee",
+    "company": "DISKOMINFOSANTIK Cianjur",
+    "period": "Dec 2019 - Mar 2020",
+    "summary": "Completed vocational field training with rotating assignments across different work areas. Gained experience in data processing, administrative reporting, and coordinating fellow trainees.",
     "responsibilities": [
-      "Designed and deployed RESTful microservices and optimized PostgreSQL database queries.",
-      "Engineered frontend interfaces using Vue 3 and Tailwind CSS with a mobile-first approach.",
-      "Established CI/CD pipeline automation with GitHub Actions for reliable deployment workflows."
+      "Used Microsoft Excel formulas and functions to process, organize, and manage data.",
+      "Prepared reports documents using Microsoft Word.",
+      "Coordinated trainees from different schools as the group leader.",
+      "Acted as a communication link between fellow trainees and supervisors."
     ],
     "achievements": [
-      "Reduced average API response latency by 35% through caching strategies with Redis.",
-      "Refactored legacy modules into clean, testable service layers."
+      "Selected as the group leader for trainees from multiple schools."
     ],
     "technologies": [
-      "Vue 3",
-      "Node.js",
-      "PostgreSQL",
-      "Redis",
-      "Docker",
-      "Tailwind CSS"
+      "Microsoft Excel",
+      "Microsoft Word"
     ]
   },
   {
-    "type": "internship",
-    "title": "Backend Engineering Intern",
-    "company": "Data & Software Labs",
-    "period": "2022 - 2023",
-    "summary": "Assisted senior backend engineers in developing internal APIs and data extraction pipelines.",
+    "type": "full-time",
+    "title": "IT Laboratory Assistant (Toolman TKJ)",
+    "company": "SMK Bela Nusantara Cianjur",
+    "period": "2022 (3 months)",
+    "summary": "Supported computer laboratory operations by maintaining PCs, troubleshooting hardware and software issues, and managing laboratory equipment.",
     "responsibilities": [
-      "Implemented CRUD endpoints and integrated validation middlewares.",
-      "Assisted in constructing automated database migration scripts and API test coverage."
+      "Performed Operating System installation, driver configuration, and software installation.",
+      "Diagnosed and troubleshot computer hardware and software issues.",
+      "Performed hardware maintenance, component replacement, and PC servicing.",
+      "Managed laboratory equipment inventory and student borrowing records.",
+      "Helped ensure computers and laboratory equipment were ready for learning activities."
     ],
-    "achievements": [
-      "Delivered an automated data parsing script that streamlined weekly internal reporting."
-    ],
+    "achievements": [],
     "technologies": [
-      "Node.js",
-      "Express.js",
-      "MySQL",
-      "Git"
+      "Operating System",
+      "Computer Hardware",
+      "PC Troubleshooting",
+      "Hardware Maintenance"
     ]
   }
 ]
