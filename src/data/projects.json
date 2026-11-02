@@ -23,7 +23,7 @@
   },
   {
     "title": "25Labstudio - Studio Rental Management System (Kerja Praktik Project)",
-    "description": "A web-based management system for a music studio rental and music course business. It provides booking management, scheduling, and payment processing through Midtrans, helping streamline daily studio operations. and log in/register using a Google account to enhance the user experience.",
+    "description": "A web-based management system for a music studio rental and music course business. It provides booking management, scheduling, and payment processing through Midtrans, and supports log in and registration with a Google account to enhance the user experience. Together, these features help streamline daily studio operations.",
     "images": [
       "src/assets/projects/25Labstudio/1.png",
       "src/assets/projects/25Labstudio/2.png",

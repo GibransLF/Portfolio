@@ -4,11 +4,44 @@ import { Calendar, Award, ZoomIn, X, ChevronLeft, ChevronRight } from '@lucide/v
 import ImageWithFallback from '@/components/ImageWithFallback.vue'
 import rawCertificates from '@/data/certificates.json'
 
+// Vite eager glob resolver for certificate image assets located in src/assets/certificates/
+const certAssetModules = import.meta.glob(
+  ['/src/assets/certificates/**/*.{png,jpg,jpeg,webp,svg}', '@/assets/certificates/**/*.{png,jpg,jpeg,webp,svg}'],
+  { eager: true, import: 'default' }
+)
+
+const resolveCertImagePath = (path) => {
+  if (!path || typeof path !== 'string') return ''
+  const trimmed = path.trim()
+  if (!trimmed) return ''
+  if (/^(https?:|\/\/|data:)/.test(trimmed)) return trimmed
+
+  const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`
+  if (certAssetModules[normalized]) {
+    return certAssetModules[normalized]
+  }
+
+  // Fallback by filename match
+  const fileName = trimmed.split('/').pop()
+  for (const [key, val] of Object.entries(certAssetModules)) {
+    if (key.endsWith(`/${fileName}`)) {
+      return val
+    }
+  }
+
+  return trimmed
+}
+
 const validCertificates = computed(() => {
   if (!Array.isArray(rawCertificates)) return []
-  return rawCertificates.filter(
-    (c) => c && typeof c === 'object' && typeof c.title === 'string' && c.title.trim().length > 0
-  )
+  return rawCertificates
+    .filter(
+      (c) => c && typeof c === 'object' && typeof c.title === 'string' && c.title.trim().length > 0
+    )
+    .map((c) => ({
+      ...c,
+      image: resolveCertImagePath(c.image),
+    }))
 })
 
 const ITEMS_PER_PAGE = 3

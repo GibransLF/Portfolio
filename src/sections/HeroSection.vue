@@ -1,8 +1,14 @@
 <script setup>
 import ImageWithFallback from '@/components/ImageWithFallback.vue'
 import profileData from '@/data/profile.json'
+import heroPhoto from '@/assets/hero.jpg'
 
-const profile = profileData
+const profile = {
+  ...profileData,
+  photo: (profileData.photo && /^(https?:|\/\/|data:)/.test(profileData.photo))
+    ? profileData.photo
+    : heroPhoto
+}
 
 const scrollTo = (e, href) => {
   const target = document.querySelector(href)
